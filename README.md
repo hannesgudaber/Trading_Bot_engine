@@ -70,3 +70,135 @@ Lists every detected transaction, swap, nonce check, or external buy in chronolo
 Each entry includes a timestamp and concise execution result for precise monitoring.
 
 ---
+# ⚙️ Core Algorithms & Trading Logic
+
+This section describes the internal mechanisms and logic behind the **Dr. Einhorn Trading & Analysis Software**.  
+All parameters, limits, and runtime behaviors can be adjusted in real time through dedicated control panels.
+
+---
+
+## 🧩 Trading Bot Configuration
+
+![Trading Bot Configuration](bot%20config.JPG)
+
+The configuration module defines the bot’s runtime, trading amount, and operational behavior.
+
+### Key Parameters
+| Setting | Description |
+|----------|--------------|
+| **Trading Mode** | Choose between **Pump (Buy Only)**, **Dump (Sell Only)**, or **Normal (Buy & Sell)** modes. |
+| **Runtime (Minutes)** | Total session duration before automatic shutdown. |
+| **Trade Amount (ETH)** | Standard value used for each buy/sell action. |
+| **Min / Max Trade Amount (ETH)** | Defines the dynamic lower and upper range for trade amounts. |
+| **Max Threads** | Number of parallel worker instances for multi-wallet trading. |
+| **Sell-on-Buy** | Optional reactive selling mechanism triggered after a buy event within a given time window. |
+| **Buy/Sell Ratio** | Sets probability distribution (0 = Sell Only, 0.5 = Balanced, 1 = Buy Only). |
+| **Pool Selection** | Automatic pool detection or manual selection for advanced users. |
+
+---
+
+## 📉 Live Trade Amounts
+
+![Live Trade Amounts](livetradeamm.JPG)
+
+This module enables real-time adjustment of trade amounts during runtime.  
+All changes are written directly into the configuration JSON and reflected immediately in the trading loop.
+
+- **Standard Trade Amount** – Base trade size  
+- **Minimum / Maximum** – Dynamic bounds for randomization  
+- **Save & Apply** – Writes new values without stopping active threads  
+
+---
+
+## ⚖️ Live Buy/Sell Ratio
+
+![Buy/Sell Ratio](Ratiobuy.JPG)
+
+This interface allows live modification of the market behavior:
+- **Buy Probability (0 – 1)** directly changes trade direction tendency.  
+- Real-time adjustments influence the next execution cycles instantly.  
+- Supports both manual control and automated re-balancing through the target stabilization system.
+
+---
+
+## 🚦 Trade Rate Limiter
+
+![Trade Rate Limiter](rate%20LimiterJPG.JPG)
+
+A core safety system that prevents over-trading and simulates natural market rhythm.
+
+| Setting | Function |
+|----------|-----------|
+| **Enable Rate Limiter** | Activates trade pacing control globally. |
+| **Max Trades / Minute** | Defines the upper limit of allowed executions. |
+| **Min Interval Between Trades** | Global cooldown (seconds) shared across all wallets. |
+| **Organic Trading (Auto-Distribute Evenly)** | Randomizes trade delays using internal λ₁/λ₂ functions to emulate human timing. |
+
+---
+
+## 🎯 Target Price Stabilization
+
+![Target Stabilization Active](target%20stabilization.JPG)
+
+This module continuously monitors on-chain prices and balances the buy/sell ratio  
+to maintain the desired target value within a tolerance corridor.
+
+- **Target USD Price** – Price goal in USD  
+- **Tolerance (%)** – Acceptable deviation range  
+- **Active Status** – Displays mode, ratio, and live range limits  
+
+When enabled, the bot self-adjusts:
+if current_price < target - tolerance → increase Buy ratio
+if current_price > target + tolerance → increase Sell ratio
+
+## 🪙 Token & Pool Creation
+
+![Token Creation](token%20pool%20creation.JPG)
+
+Instantly deploy new tokens and initialize liquidity pools directly from the GUI.
+
+- **Token Name / Symbol / Supply** — basic ERC-20 parameters  
+- **Optional Pool Creation** — automatic pairing with ETH after deployment  
+- **Create Token** — deploys the smart contract and registers it in the system configuration  
+
+---
+
+## 📜 Event Log & Market Visualization
+
+![Event Log](event%20log.JPG)
+
+The log panel records every execution and system message in real time:
+- Price updates, nonce checks, and transaction results  
+- Target enable/disable events  
+- Thread lifecycle management (PID tracking)
+
+---
+
+## 📊 Real-Time Chart Example
+
+![Live Market Chart](chart1.JPG)
+
+Charts illustrate how the stabilization engine interacts with the market.  
+Candlestick and volume data reflect organic trading distribution and ratio-based control.
+
+---
+
+## 🧠 Algorithmic Foundation
+
+The trading engine combines deterministic logic with probabilistic modeling:
+λ₁ = trade_interval_random(min,max)
+λ₂ = adaptive_delay(fee_pressure, gas_limit)
+
+P(buy) = ratio * (1 - λ₁)
+P(sell) = (1 - ratio) * λ₂
+
+A simplified **Bellman–Ford** pathfinding adaptation ensures optimal transaction timing across multiple wallets  
+to simulate realistic, human-like trading behavior without direct arbitrage objectives.
+
+---
+A simplified **Bellman–Ford** pathfinding adaptation ensures optimal transaction timing across multiple wallets  
+to simulate realistic, human-like trading behavior without direct arbitrage objectives.
+
+---
+
+
