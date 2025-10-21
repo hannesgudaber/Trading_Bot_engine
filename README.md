@@ -200,5 +200,85 @@ A simplified **Bellman–Ford** pathfinding adaptation ensures optimal transacti
 to simulate realistic, human-like trading behavior without direct arbitrage objectives.
 
 ---
+---
 
+## 🧩 System Sentinel: The Role of the Rate Limiter
+
+The **Rate Limiter** in Dr. Einhorn is not just a safety switch — it acts as a **sentinel layer**  
+between the trading threads and the blockchain execution queue.
+
+While each bot instance runs independently, generating buy/sell orders according to the ratio logic,  
+the **sentinel** intercepts and evaluates every pending trade request before it is submitted on-chain.
+
+### 🧠 Functional Overview
+- The limiter **does not stop the bots** — they continue to run, collect data, and generate signals.
+- Instead, it **filters** which trades are actually allowed to pass based on:
+  - The current **max trades per minute**,
+  - The **minimum interval** between all trades (global cooldown),
+  - And the current **buy/sell ratio state**.
+- When the limit is reached, subsequent trades are **temporarily delayed** rather than canceled.
+  This keeps the internal statistics coherent and prevents artificial volume spikes.
+
+### 🎯 Core Purpose
+By controlling transaction throughput without pausing execution,  
+the Rate Limiter ensures:
+1. **Ratio Stability** – maintains a consistent buy/sell distribution even under heavy load.  
+2. **Organic Flow** – trades appear human and evenly spaced across wallets.  
+3. **Gas Efficiency** – redundant or spammy transactions are automatically throttled.
+
+In essence, the sentinel serves as the **rhythm keeper** of the entire system —  
+letting the bots "think" freely while ensuring that only the right trades reach the network at the right time.
+
+---
+---
+
+## 🛰️ Pool Monitor & Reaction System
+
+The **Pool Monitor** acts as a continuous guardian process, analyzing every swap and liquidity event in real time.  
+It is directly connected to the blockchain via RPC/WebSocket and reacts instantly to external activity in the tracked pool.
+
+### 🔍 Core Behavior
+
+The monitor continuously checks:
+- Incoming and outgoing swaps  
+- LP (liquidity pool) changes  
+- External wallet interactions  
+- Unusual gas or timing patterns (potential sniper bot behavior)
+
+Depending on the **active mode**, the reaction differs:
+
+---
+
+### 🚀 Pump Mode (Buy-Only Protection)
+When operating in **Pump Mode**, the monitor functions as an emergency defense system.  
+If an external sniper bot or high-frequency buy is detected:
+
+- The monitor **immediately triggers pool liquidation** (removes all liquidity).  
+- **All bot processes are terminated instantly.**  
+- This ensures **no further trades can be executed**, effectively freezing the market.  
+- Purpose: protect the project and liquidity from sniper exploitation during critical early phases.
+
+---
+
+### ⚖️ Normal Mode (Balanced Trading)
+In **Normal Mode**, the monitor behaves passively but remains active in the background.
+
+- On suspicious or external trade detection, it **stops the internal bot execution** safely.  
+- The **GUI remains active**, allowing manual inspection and quick restart.  
+- This ensures stability without losing analytics or monitoring visibility.  
+
+---
+
+### 🔒 Dump Mode (Sell-Only)
+In **Dump Mode**, the monitor is **inactive** — it does not intervene with pool or bot processes.  
+This mode is typically used for controlled liquidity exits or stress tests.
+
+---
+
+### 🧠 Purpose
+The monitor creates a protective perimeter around automated trading logic.  
+By dynamically halting, isolating, or shutting down processes based on context,  
+it prevents unwanted interference while keeping the system transparent and under full user control.
+
+---
 
