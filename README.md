@@ -282,3 +282,71 @@ it prevents unwanted interference while keeping the system transparent and under
 
 ---
 
+---
+
+## 🎯 Price Stabilization Engine
+
+The **Price Stabilization Engine** is the core intelligence layer of the Dr. Einhorn trading system.  
+It continuously analyzes live market data, calculates price deviations,  
+and dynamically adjusts the internal **buy/sell ratio** to keep the asset price within a defined range.
+
+---
+
+### 🧮 Core Concept
+
+The engine operates on two key parameters:
+- **Target Price (USD)** — the ideal market value to maintain.  
+- **Tolerance (%)** — the allowed deviation range above or below the target.
+
+It runs as an autonomous process that constantly compares the **current price**  
+against the **target corridor**:
+
+lower_bound = target_price * (1 - tolerance/100)
+upper_bound = target_price * (1 + tolerance/100)
+
+Whenever the live price moves outside this range, the bot automatically adapts  
+its **trading behavior** to counterbalance the shift.
+
+---
+
+### ⚖️ Dynamic Ratio Adjustment
+
+The stabilization engine directly manipulates the **Buy/Sell Ratio**:
+
+| Condition | Action | Example Ratio |
+|------------|---------|----------------|
+| Price below lower bound | Increase buy pressure | 0.8 (80% buy / 20% sell) |
+| Price above upper bound | Increase sell pressure | 0.2 (20% buy / 80% sell) |
+| Price within range | Maintain balanced mode | 0.5 (50% / 50%) |
+
+This adjustment occurs in real time without restarting the bot —  
+the ratio value is updated and applied to all active trading threads instantly.
+
+---
+
+### 🤖 Detection & Response Logic
+
+The system uses a lightweight detection algorithm that monitors:
+- Continuous on-chain swaps  
+- Average price movement (EMA/SMA logic)  
+- Trade impact relative to pool liquidity  
+
+Based on these signals, it chooses the optimal **probability ratio**  
+that statistically drives the price back toward the target range.
+
+---
+
+### 🧠 Functional Summary
+- Fully automatic — no manual input required after activation  
+- Works in all active modes (Pump, Dump, Normal)  
+- Adjusts ratio instantly and independently for every running thread  
+- Maintains long-term stability without freezing liquidity or volume
+
+In simple terms, the stabilization engine is the **brain** of Dr. Einhorn:  
+it *recognizes* price shifts and *responds* by self-balancing market behavior  
+through real-time ratio correction — keeping the market both active and under control.
+
+---
+
+
+Jaaa   ich bin das wohl :-)  
